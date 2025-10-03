@@ -1,4 +1,5 @@
 import { verifyJwt, signJwt } from '../utils/jwtSignAndVerify.js';
+import ENV from '../config/env.js';
 
 const refreshToken = async (req, res) => {
     try {
@@ -17,6 +18,17 @@ const refreshToken = async (req, res) => {
         // Optionally check for token revocation/blacklist here
         const { id, role } = payload;
         const newAccessToken = await signJwt({ id, role }, { exp: '15m' });
+
+        const newRefreshToken = await signJwt({ id, role }, { exp : '7d', notBefore: '15m'})
+        
+        res.clearCookie('refreshToken'); // Clear the old refresh token from the client
+
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly : false,
+            secure : ENV.NODE_ENV === 'production',
+            sameSite : 'Lax',
+            maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days
+        })
         return res.status(200).json({
             status: 'success',
             token: newAccessToken
