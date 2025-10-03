@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+enum Role {
+  user
+  hotel_owner
+  admin
+}
+
+enum Status {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+model User {
+  id      Int     @id @default(autoincrement())
+  name    String
+  email   String  @unique
+  password  String
+  role    Role    @default(user)
+  hotels   Hotel[]
+  bookings Booking[]
+  reviews   Review[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+}
+
+model Hotel {
+  id      Int     @id @default(autoincrement())
+  name    String
+  address String
+  city    String
+  state   String
+  country String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  rooms  Room[]
+  bookings  Booking[]
+  reviews   Review[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([city])
+  @@index([state])
+  @@index([country])
+}
+
+model Room {
+  id      Int     @id @default(autoincrement())
+  hotel   Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId Int
+  roomNumber String
+  roomType String
+  capacity Int
+  price   Float
+  description String
+  amenities Json
+  booking Booking[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hotelId, roomNumber])
+  @@index([price])
+  @@index([capacity])
+  @@index([roomType])
+}
+
+model Booking {
+  id      Int     @id @default(autoincrement())
+  price   Float
+  user    User    @relation(fields: [userId], references: [id])
+  userId  Int
+  hotel   Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId Int
+  room    Room    @relation(fields: [roomId], references: [id])
+  roomId  Int
+  totalPrice    Float
+  checkIn DateTime
+  checkOut DateTime
+  status Status @default(pending)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, hotelId, roomId, checkIn, checkOut])
+  @@index([roomId, checkIn, checkOut])
+  @@index([status])
+}
+
+model Review {
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  hotel   Hotel  @relation(fields: [hotelId], references: [id])
+  hotelId Int
+  text    String
+
+  @@unique([userId, hotelId])
+  @@index([hotelId])
+}
