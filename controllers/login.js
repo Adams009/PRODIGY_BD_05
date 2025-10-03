@@ -33,7 +33,7 @@ const loginController = async (req, res) => {
         const refreshToken = await signJwt(payload, { exp : '7d', notBefore: '15m'})
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly : false,
+            httpOnly : ENV.NODE_ENV === 'production',
             secure : ENV.NODE_ENV === 'production',
             sameSite : 'Lax',
             maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days
@@ -46,7 +46,7 @@ const loginController = async (req, res) => {
                 user : userResponse
             }
         })
-        
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({

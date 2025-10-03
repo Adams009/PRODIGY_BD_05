@@ -24,7 +24,7 @@ const refreshToken = async (req, res) => {
         res.clearCookie('refreshToken'); // Clear the old refresh token from the client
 
         res.cookie('refreshToken', newRefreshToken, {
-            httpOnly : false,
+            httpOnly : ENV.NODE_ENV === 'production',
             secure : ENV.NODE_ENV === 'production',
             sameSite : 'Lax',
             maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days
