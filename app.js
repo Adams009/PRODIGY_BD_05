@@ -24,11 +24,13 @@ import loginSchema from './validators/loginSchema.js';
 
 import registerRouter from './routes/register.js'
 import loginRouter from './routes/login.js'
+import refreshTokenRouter from './routes/refreshToken.js'
 
 
 
 app.use('/register', registrationSchema, validatorError, registerRouter)
 app.use('/login', loginSchema, validatorError, loginRouter)
+app.use('/refreshToken', refreshTokenRouter)
 
 const port = ENV.PORT
 
