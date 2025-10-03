@@ -46,7 +46,6 @@ const loginController = async (req, res) => {
                 user : userResponse
             }
         })
-
         
     } catch (error) {
         console.log(error);
