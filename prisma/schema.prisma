@@ -64,7 +64,7 @@ model Hotel {
 
 model Room {
   id      Int     @id @default(autoincrement())
-  hotel   Hotel   @relation(fields: [hotelId], references: [id])
+  hotel   Hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   hotelId Int
   roomNumber String
   roomType String
@@ -87,9 +87,9 @@ model Booking {
   price   Float
   user    User    @relation(fields: [userId], references: [id])
   userId  Int
-  hotel   Hotel   @relation(fields: [hotelId], references: [id])
+  hotel   Hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   hotelId Int
-  room    Room    @relation(fields: [roomId], references: [id])
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId  Int
   totalPrice    Float
   checkIn DateTime
@@ -107,7 +107,7 @@ model Review {
   id      Int    @id @default(autoincrement())
   user    User   @relation(fields: [userId], references: [id])
   userId  Int
-  hotel   Hotel  @relation(fields: [hotelId], references: [id])
+  hotel   Hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   hotelId Int
   text    String
 
