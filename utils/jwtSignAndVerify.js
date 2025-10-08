@@ -1,6 +1,7 @@
 import {importPKCS8, importSPKI, exportPKCS8, exportSPKI, generateKeyPair} from 'jose';
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
+import path from 'path';
 import ENV from '../config/envConfig.js';
 import { SignJWT, jwtVerify } from 'jose';
 
@@ -26,12 +27,12 @@ async function generateAndExportKeys() {
 
 // Load the keys from files
 async function getPrivateKey() {
-    const privateKey = await importPKCS8(readFileSync(ENV.PRIVATE_KEY),'utf-8')
-    return privateKey
+    const privateKey = await importPKCS8(readFileSync(path.join(process.cwd(), ENV.PRIVATE_KEY), 'utf-8'), 'RS256');
+    return privateKey;
 }
 
 async function getPublicKey() {
-    const publicKey = await importSPKI(readFileSync(ENV.PUBLIC_KEY), 'utf-8')
+    const publicKey = await importSPKI(readFileSync(path.join(process.cwd(), ENV.PUBLIC_KEY), 'utf-8'), 'RS256');
     return publicKey;
 }
 
@@ -72,5 +73,3 @@ export async function verifyJwt(token) {
         return null;
     }
 }
-
-export {generateAndExportKeys, signJwt, verifyJwt};

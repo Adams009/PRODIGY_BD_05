@@ -1,7 +1,7 @@
 
 
 // Authorization middleware: checks if req.user.role is allowed
-export function authorizeRoles(...allowedRoles) {
+const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
         if (!req.user || !req.user.role) {
             return res.status(401).json({ error: 'User not authenticated' });
@@ -12,3 +12,5 @@ export function authorizeRoles(...allowedRoles) {
         next();
     };
 }
+
+export default authorizeRoles
